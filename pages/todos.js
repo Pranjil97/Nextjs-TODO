@@ -1,47 +1,136 @@
 import Header from '@/Components/Header'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Footer from '@/Components/Footer'
+import { AiOutlineDelete } from 'react-icons/ai'
+import { CiEdit } from 'react-icons/ci'
 import '@/app/globals.css'
 
-const todos = () => {
+const Todos = () => {
+    // Initialize todos state with an empty array
+    const [todos, setTodos] = useState([]);
+    // Initialize editedTodo state to store the todo being edited
+    const [editedTodo, setEditedTodo] = useState({ title: '', desc: '' });
+
+    // Fetch todos data from localStorage when the component mounts
+    useEffect(() => {
+        const storedTodos = localStorage.getItem('todos');
+        if (storedTodos) {
+            // Parse the JSON data from localStorage and update the state
+            setTodos(JSON.parse(storedTodos));
+        }
+    }, []);
+
+    // Delete todo
+    const deleteTodo = (title) => {
+        // Filter out the todo with the matching title
+        const newTodos = todos.filter((todo) => todo.title !== title);
+        // Update the todos state and localStorage with the newTodos
+        setTodos(newTodos);
+        localStorage.setItem('todos', JSON.stringify(newTodos));
+    };
+
+    // Edit todo
+    const editTodo = (todo) => {
+        setEditedTodo({
+            title: todo.title,
+            desc: todo.desc
+        });
+    };
+
+    // Save the edited todo
+    const saveEditedTodo = () => {
+        const editedTodos = todos.map((todo) =>
+            todo.title === editedTodo.title ? editedTodo : todo
+        );
+        // Update the todos state and localStorage with the editedTodos
+        setTodos(editedTodos);
+        localStorage.setItem('todos', JSON.stringify(editedTodos));
+        // Clear the editedTodo state
+        setEditedTodo({
+            title: '',
+            desc: ''
+        });
+    };
+
+    const onChange = (e) => {
+        setEditedTodo({ ...editedTodo, [e.target.name]: e.target.value });
+    };
+
     return (
         <div>
             <Header />
             <div className='w-full min-h-screen'>
                 <section className="text-gray-600 body-font">
-                    <div className="container px-5 py-24 mx-auto">
+                    <div className="container px-5 py-10 mx-auto">
                         <div className="flex flex-col text-center w-full mb-20">
                             <h1 className="text-4xl font-medium title-font mb-4 text-gray-900">Your Todos</h1>
-                            <p className="lg:w-2/3 mx-auto leading-relaxed text-base">Your Todos will show up here</p>
+                            {todos.length === 0 ? (<p className="lg:w-2/3 mx-auto leading-relaxed text-base">Your Todos will show up here.
+                                Please go to the <a href="/" className="text-indigo-500">Home</a> page to add a Todo.
+                            </p>) : ''}
                         </div>
-                        <div className="flex flex-wrap -m-4">
-                            <div className="p-4 lg:w-1/4 md:w-1/2">
-                                <div className="h-full flex flex-col items-center text-center">
-                                    <img alt="team" className="flex-shrink-0 rounded-lg w-full h-56 object-cover object-center mb-4" src="https://picsum.photos/2003/3001" />
-                                    <div className="w-full">
-                                        <h2 className="title-font font-medium text-lg text-gray-900">Alper Kamu</h2>
-                                        <h3 className="text-gray-500 mb-3">UI Developer</h3>
-                                        <p className="mb-4">DIY tote bag drinking vinegar cronut adaptogen squid fanny pack vaporware.</p>
-                                        <span className="inline-flex">
-                                            <a className="text-gray-500">
-                                                <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5" viewBox="0 0 24 24">
-                                                    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
-                                                </svg>
-                                            </a>
-                                            <a className="ml-2 text-gray-500">
-                                                <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5" viewBox="0 0 24 24">
-                                                    <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"></path>
-                                                </svg>
-                                            </a>
-                                            <a className="ml-2 text-gray-500">
-                                                <svg fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" className="w-5 h-5" viewBox="0 0 24 24">
-                                                    <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"></path>
-                                                </svg>
-                                            </a>
-                                        </span>
+
+                        <div className='flex flex-wrap -m-4'>
+                            {todos.map((item, key) => {
+                                // Create a unique seed parameter using a combination of key and title
+                                const seed = `${item.title}_${key}`;
+
+                                // Generate the image URL with the unique seed parameter
+                                const imageUrl = `https://picsum.photos/seed/${seed}/2003/3001`;
+                                return <div key={key} className="p-4 lg:w-1/4 md:w-1/2">
+                                    <div className="h-full flex flex-col items-center text-center">
+                                        <img alt="team" className="flex-shrink-0 rounded-lg w-full h-56 object-cover object-center mb-4" src={imageUrl} />
+                                        <div className="w-full">
+                                            {editedTodo.title === item.title ? (
+                                                // Show input fields if the todo is being edited
+                                                <div className='space-y-2'>
+                                                    <input
+                                                        name="title"
+                                                        type="text"
+                                                        value={editedTodo.title}
+                                                        onChange={onChange}
+                                                        placeholder='Enter New Title'
+                                                        className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                                    />
+                                                    <input
+                                                        name="desc"
+                                                        type="text"
+                                                        value={editedTodo.desc}
+                                                        onChange={onChange}
+                                                        placeholder='Enter New Description'
+                                                        className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                                    />
+                                                    <button
+                                                        className="text-white bg-indigo-500 border-0 flex justify-center py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                                                        onClick={saveEditedTodo}
+                                                    >
+                                                        Save
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                // Show todo details if not being edited
+                                                <>
+                                                    <h2 className="title-font font-medium text-lg text-gray-900">{item.title}</h2>
+                                                    <p className="mb-4">{item.desc}</p>
+                                                    <span className="inline-flex">
+                                                        <a
+                                                            className="text-gray-500 text-2xl cursor-pointer"
+                                                            onClick={() => deleteTodo(item.title)}
+                                                        >
+                                                            <AiOutlineDelete />
+                                                        </a>
+                                                        <a
+                                                            className="ml-2 text-gray-500 text-2xl cursor-pointer"
+                                                            onClick={() => editTodo(item)}
+                                                        >
+                                                            <CiEdit />
+                                                        </a>
+                                                    </span>
+                                                </>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            })}
                         </div>
                     </div>
                 </section>
@@ -51,4 +140,4 @@ const todos = () => {
     )
 }
 
-export default todos
+export default Todos;

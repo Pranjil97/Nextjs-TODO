@@ -1,5 +1,6 @@
 'use client';
-import { useState } from "react"
+import { useState } from "react";
+import { Toaster, toast } from "react-hot-toast";
 
 export default function Home() {
 
@@ -14,7 +15,7 @@ export default function Home() {
     if (todos) {
       let todosJson = JSON.parse(todos)
       if (todosJson.filter(value => { return value.title == todo.title }).length > 0) {
-        alert(" Todo with same title already exists ")
+        toast.error(" Todo already exists ")
       } else {
         todosJson.push(todo)
         localStorage.setItem("todos", JSON.stringify(todosJson))
@@ -22,10 +23,11 @@ export default function Home() {
           title: '',
           desc: ''
         })
+        toast.success(" Todo added successfully ")
       }
     } else {
       localStorage.setItem("todos", JSON.stringify([todo]))
-      alert(" Todo added successfully ")
+      toast.success(" Todo added successfully ")
     }
   }
 
@@ -34,7 +36,7 @@ export default function Home() {
   }
 
   return (
-    <div className='items-center text-3xl'>
+    <div className='items-center'>
       <section className="text-gray-600 body-font">
         <div className="container px-5 py-24 mx-auto flex flex-wrap items-center">
           <div className="lg:w-3/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0">
@@ -56,6 +58,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      <Toaster position="bottom-right" />
     </div>
   )
 }
