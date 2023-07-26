@@ -63,7 +63,7 @@ const Todos = () => {
                 <section className="text-gray-600 body-font">
                     <div className="container px-5 py-10 mx-auto">
                         <div className="flex flex-col text-center w-full mb-20">
-                            <h1 className="text-4xl font-medium title-font mb-4 text-gray-900">Your Todos</h1>
+                            <h1 className="text-4xl font-medium title-font mb-4 text-branddark">Your Todos</h1>
                             {todos.length === 0 ? (<p className="lg:w-2/3 mx-auto leading-relaxed text-base">Your Todos will show up here.
                                 Please go to the <a href="/" className="text-indigo-500">Home</a> page to add a Todo.
                             </p>) : ''}
@@ -100,7 +100,7 @@ const Todos = () => {
                                                         className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                                                     />
                                                     <button
-                                                        className="text-white bg-indigo-500 border-0 flex justify-center py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                                                        className="text-white bg-branddark hover:bg-brandnormal active:bg-branddark border-0 flex justify-center py-2 px-8 focus:outline-none rounded text-lg"
                                                         onClick={saveEditedTodo}
                                                     >
                                                         Save
