@@ -1,6 +1,6 @@
-import Header from '@/Components/Header'
+import Header from '@/app/Components/Header'
 import React, { useEffect, useState } from 'react'
-import Footer from '@/Components/Footer'
+import Footer from '@/app/Components/Footer'
 import { AiOutlineDelete } from 'react-icons/ai'
 import { CiEdit } from 'react-icons/ci'
 import '@/app/globals.css'
